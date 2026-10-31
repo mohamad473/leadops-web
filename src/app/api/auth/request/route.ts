@@ -7,6 +7,7 @@ import { createLoginToken } from '@/lib/session';
 const hits = new Map<string, number[]>();
 function limited(key: string): boolean {
   const now = Date.now();
+  for (const [k, times] of hits) if (times.every((t) => now - t >= 15 * 60_000)) hits.delete(k);
   const recent = (hits.get(key) || []).filter((t) => now - t < 15 * 60_000);
   recent.push(now);
   hits.set(key, recent);

@@ -1,12 +1,22 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { ApiError, askBot } from '@/lib/api';
+import { config } from '@/lib/config';
 import { getSession } from '@/lib/session';
 
 export async function POST(req: NextRequest) {
   // Only accept requests from this site's own pages.
   const origin = req.headers.get('origin');
-  if (origin && new URL(origin).host !== req.headers.get('host')) {
-    return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 });
+  if (origin) {
+    let originHost = '';
+    try {
+      originHost = new URL(origin).host;
+    } catch {
+      // "null" or malformed origin: treated as foreign
+    }
+    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    if (originHost !== host && originHost !== new URL(config.appUrl).host) {
+      return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 });
+    }
   }
   const session = await getSession();
   if (!session) return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
