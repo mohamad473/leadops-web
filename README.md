@@ -33,6 +33,10 @@ npm run dev
 
 Open http://localhost:3000 (use the same address as `APP_URL`, so the sign-in cookie matches).
 
+> **Windows:** make sure the file is really named `.env.local` (not `.env.local.txt` — turn on "File name extensions" in Explorer), and that it sits next to `package.json`. Restart `npm run dev` after every change to `.env.local`.
+>
+> In development, if `SESSION_SECRET` is missing the app uses a built-in development secret and prints a warning. Set a real one before hosting.
+
 ### `.env.local`
 
 | Variable | What it is |
